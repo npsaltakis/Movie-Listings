@@ -1,0 +1,4 @@
+--
+-- 0.5.0: gallery management UI, frontend search/filter, SEF router.
+-- No schema changes (the #__movielist_images table already exists from install).
+--

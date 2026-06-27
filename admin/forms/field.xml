@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Nickpsal\Component\Movielist\Administrator\Field">
+    <fieldset name="details">
+        <field name="id" type="number" label="JGLOBAL_FIELD_ID_LABEL" default="0" readonly="true" class="readonly" />
+
+        <field name="title" type="text" label="JGLOBAL_TITLE" required="true" size="50"
+               description="COM_MOVIELIST_FIELD_TITLE_DESC" />
+
+        <field name="name" type="text" label="COM_MOVIELIST_FIELD_NAME" size="50"
+               description="COM_MOVIELIST_FIELD_NAME_DESC"
+               hint="COM_MOVIELIST_FIELD_NAME_HINT" />
+
+        <field name="label" type="text" label="COM_MOVIELIST_FIELD_LABEL_LABEL" size="50" />
+
+        <field name="type" type="list" label="COM_MOVIELIST_FIELD_TYPE" default="text">
+            <option value="text">COM_MOVIELIST_FIELD_TYPE_TEXT</option>
+            <option value="textarea">COM_MOVIELIST_FIELD_TYPE_TEXTAREA</option>
+            <option value="editor">COM_MOVIELIST_FIELD_TYPE_EDITOR</option>
+            <option value="list">COM_MOVIELIST_FIELD_TYPE_LIST</option>
+            <option value="radio">COM_MOVIELIST_FIELD_TYPE_RADIO</option>
+            <option value="checkboxes">COM_MOVIELIST_FIELD_TYPE_CHECKBOXES</option>
+            <option value="number">COM_MOVIELIST_FIELD_TYPE_NUMBER</option>
+            <option value="calendar">COM_MOVIELIST_FIELD_TYPE_DATE</option>
+            <option value="url">COM_MOVIELIST_FIELD_TYPE_URL</option>
+            <option value="email">COM_MOVIELIST_FIELD_TYPE_EMAIL</option>
+            <option value="media">COM_MOVIELIST_FIELD_TYPE_MEDIA</option>
+        </field>
+
+        <field name="description" type="textarea" label="JGLOBAL_DESCRIPTION" rows="3" />
+
+        <field name="default_value" type="text" label="COM_MOVIELIST_FIELD_DEFAULT" size="50" />
+
+        <field name="options" type="subform" label="COM_MOVIELIST_FIELD_OPTIONS"
+               description="COM_MOVIELIST_FIELD_OPTIONS_DESC" multiple="true" layout="joomla.form.field.subform.repeatable-table">
+            <form>
+                <field name="name" type="text" label="COM_MOVIELIST_FIELD_OPTION_TEXT" />
+                <field name="value" type="text" label="COM_MOVIELIST_FIELD_OPTION_VALUE" />
+            </form>
+        </field>
+
+        <field name="required" type="radio" label="COM_MOVIELIST_FIELD_REQUIRED" layout="joomla.form.field.radio.switcher" default="0">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field name="searchable" type="radio" label="COM_MOVIELIST_FIELD_SEARCHABLE" layout="joomla.form.field.radio.switcher" default="0">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field name="is_multiple" type="radio" label="COM_MOVIELIST_FIELD_MULTIPLE"
+               description="COM_MOVIELIST_FIELD_MULTIPLE_DESC" layout="joomla.form.field.radio.switcher" default="0">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field name="multiple_mode" type="list" label="COM_MOVIELIST_FIELD_MULTIPLE_MODE"
+               description="COM_MOVIELIST_FIELD_MULTIPLE_MODE_DESC" default="single" showon="is_multiple:1">
+            <option value="single">COM_MOVIELIST_FIELD_MODE_SINGLE</option>
+            <option value="group">COM_MOVIELIST_FIELD_MODE_GROUP</option>
+        </field>
+
+        <field name="max_items" type="number" label="COM_MOVIELIST_FIELD_MAX_ITEMS"
+               description="COM_MOVIELIST_FIELD_MAX_ITEMS_DESC" default="0" min="0"
+               showon="is_multiple:1" />
+
+        <field name="subfields" type="subform" label="COM_MOVIELIST_FIELD_SUBFIELDS"
+               description="COM_MOVIELIST_FIELD_SUBFIELDS_DESC" multiple="true"
+               showon="is_multiple:1[AND]multiple_mode:group"
+               layout="joomla.form.field.subform.repeatable-table">
+            <form>
+                <field name="label" type="text" label="COM_MOVIELIST_FIELD_SUBFIELD_LABEL" />
+                <field name="name" type="text" label="COM_MOVIELIST_FIELD_SUBFIELD_NAME"
+                       hint="e.g. role" />
+                <field name="type" type="list" label="COM_MOVIELIST_FIELD_SUBFIELD_TYPE" default="text">
+                    <option value="text">COM_MOVIELIST_FIELD_TYPE_TEXT</option>
+                    <option value="textarea">COM_MOVIELIST_FIELD_TYPE_TEXTAREA</option>
+                    <option value="editor">COM_MOVIELIST_FIELD_TYPE_EDITOR</option>
+                    <option value="number">COM_MOVIELIST_FIELD_TYPE_NUMBER</option>
+                    <option value="url">COM_MOVIELIST_FIELD_TYPE_URL</option>
+                    <option value="media">COM_MOVIELIST_FIELD_TYPE_MEDIA</option>
+                    <option value="calendar">COM_MOVIELIST_FIELD_TYPE_DATE</option>
+                </field>
+            </form>
+        </field>
+
+        <field name="show_in_list" type="radio" label="COM_MOVIELIST_FIELD_SHOW_IN_LIST" layout="joomla.form.field.radio.switcher" default="0">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field name="show_in_detail" type="radio" label="COM_MOVIELIST_FIELD_SHOW_IN_DETAIL" layout="joomla.form.field.radio.switcher" default="1">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field name="state" type="list" label="JSTATUS" default="1">
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+        </field>
+
+        <field name="ordering" type="number" label="JFIELD_ORDERING_LABEL" default="0" class="readonly" readonly="true" />
+    </fieldset>
+</form>

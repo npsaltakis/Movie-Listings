@@ -1,0 +1,9 @@
+/* com_movielist admin styles */
+.movielist-icon::before {
+    content: "\1F3AC"; /* clapperboard */
+}
+
+#movieList img,
+#directoryList img {
+    border-radius: 3px;
+}

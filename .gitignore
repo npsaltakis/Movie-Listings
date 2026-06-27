@@ -1,0 +1,16 @@
+# Claude Code local settings
+.claude/settings.local.json
+
+# Playwright MCP test artifacts (snapshots + build zip)
+.playwright-mcp/
+
+# Build output
+*.zip
+
+# OS / editor cruft
+Thumbs.db
+.DS_Store
+*.swp
+*.bak
+.idea/
+.vscode/

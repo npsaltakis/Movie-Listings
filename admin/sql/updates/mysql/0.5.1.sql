@@ -1,0 +1,4 @@
+--
+-- 0.5.1: strip #joomlaImage media fragment from image paths; add GitHub update server.
+-- No schema changes.
+--

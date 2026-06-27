@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade">
+    <name>com_movielist</name>
+    <author>Nick Psaltakis</author>
+    <authorEmail>nickpsal@gmail.com</authorEmail>
+    <creationDate>2026-06</creationDate>
+    <copyright>(C) 2026 Nick Psaltakis. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <version>0.5.1</version>
+    <description>COM_MOVIELIST_XML_DESCRIPTION</description>
+    <namespace path="src">Nickpsal\Component\Movielist</namespace>
+
+    <!-- Compatible with Joomla 5.x and 6.x / PHP 8.2+ -->
+    <scriptfile>script.php</scriptfile>
+
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
+
+    <!-- Live Update from GitHub releases (Extensions -> Update) -->
+    <updateservers>
+        <server type="extension" priority="1" name="Movie Listings Updates">https://raw.githubusercontent.com/npsaltakis/Movie-Listings/main/updates.xml</server>
+    </updateservers>
+
+    <!-- Site (frontend) files -->
+    <files folder="site">
+        <folder>src</folder>
+        <folder>tmpl</folder>
+        <folder>language</folder>
+    </files>
+
+    <media destination="com_movielist" folder="media">
+        <folder>css</folder>
+        <folder>js</folder>
+        <folder>images</folder>
+    </media>
+
+    <languages folder="site">
+        <language tag="en-GB">language/en-GB/com_movielist.ini</language>
+    </languages>
+
+    <administration>
+        <menu img="class:movielist">COM_MOVIELIST</menu>
+        <submenu>
+            <menu link="option=com_movielist&amp;view=directories" img="class:movielist-directories">COM_MOVIELIST_SUBMENU_DIRECTORIES</menu>
+            <menu link="option=com_movielist&amp;view=categories" img="class:movielist-categories">COM_MOVIELIST_SUBMENU_CATEGORIES</menu>
+            <menu link="option=com_movielist&amp;view=movies" img="class:movielist-movies">COM_MOVIELIST_SUBMENU_MOVIES</menu>
+            <menu link="option=com_movielist&amp;view=fields" img="class:movielist-fields">COM_MOVIELIST_SUBMENU_FIELDS</menu>
+        </submenu>
+
+        <files folder="admin">
+            <folder>services</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
+            <folder>sql</folder>
+            <folder>forms</folder>
+            <folder>language</folder>
+        </files>
+
+        <languages folder="admin">
+            <language tag="en-GB">language/en-GB/com_movielist.ini</language>
+            <language tag="en-GB">language/en-GB/com_movielist.sys.ini</language>
+        </languages>
+    </administration>
+</extension>
