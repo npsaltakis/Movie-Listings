@@ -11,7 +11,7 @@
 
 # Movie Listings (com_movielist)
 
-A custom **Joomla 5 / 6** component for **film‑festival** listing sites — built as a modern replacement for Mosets Tree. Multiple directories, unlimited hierarchical categories, a unified custom‑field manager, movie galleries, and pretty SEF URLs.
+A custom **Joomla 5 / 6** component for **film‑festival** listing sites. Multiple directories, unlimited hierarchical categories, a unified custom‑field manager, movie galleries, and pretty SEF URLs.
 
 > Originally built for the **Athens International Digital Film Festival**.
 

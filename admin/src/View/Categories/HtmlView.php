@@ -29,14 +29,19 @@ class HtmlView extends BaseHtmlView
     protected $state;
     public $filterForm;
     public $activeFilters;
+    public $moveDirectories;
+    public $moveParents;
 
     public function display($tpl = null)
     {
+        $model               = $this->getModel();
         $this->items         = $this->get('Items');
         $this->pagination    = $this->get('Pagination');
         $this->state         = $this->get('State');
         $this->filterForm    = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
+        $this->moveDirectories = $model->getDirectoriesList();
+        $this->moveParents     = $model->getParentCategories();
 
         if (\count($errors = $this->get('Errors'))) {
             throw new GenericDataException(implode("\n", $errors), 500);

@@ -6,7 +6,7 @@
     <creationDate>2026-06</creationDate>
     <copyright>(C) 2026 Nick Psaltakis. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <version>0.6.2</version>
+    <version>0.7.0</version>
     <description>COM_MOVIELIST_XML_DESCRIPTION</description>
     <namespace path="src">Nickpsal\Component\Movielist</namespace>
 
@@ -58,7 +58,7 @@
             <menu link="option=com_movielist&amp;view=categories" img="class:movielist-categories">COM_MOVIELIST_SUBMENU_CATEGORIES</menu>
             <menu link="option=com_movielist&amp;view=movies" img="class:movielist-movies">COM_MOVIELIST_SUBMENU_MOVIES</menu>
             <menu link="option=com_movielist&amp;view=fields" img="class:movielist-fields">COM_MOVIELIST_SUBMENU_FIELDS</menu>
-            <menu link="option=com_movielist&amp;view=migrate" img="class:movielist-migrate">COM_MOVIELIST_SUBMENU_MIGRATE</menu>
+            <menu link="option=com_movielist&amp;view=ffimport" img="class:movielist-ffimport">COM_MOVIELIST_SUBMENU_FFIMPORT</menu>
         </submenu>
 
         <files folder="admin">

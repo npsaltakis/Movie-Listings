@@ -68,7 +68,7 @@ class MoviesModel extends ListModel
     }
 
     /**
-     * Which step of the Mosets-style drill-down we are on.
+     * Which step of the directory/category/movie drill-down we are on.
      *
      * @return  string  'directories' | 'categories' | 'movies'
      */
@@ -160,6 +160,36 @@ class MoviesModel extends ListModel
                     ->from($db->quoteName('#__movielist_categories'))
                     ->where($db->quoteName('id') . ' = ' . $cat)
             )->loadResult();
+        }
+
+        return $out;
+    }
+
+    /**
+     * All categories as "Directory › Category" options for the move/copy picker.
+     *
+     * @return  array  Array of stdClass{id, label}.
+     */
+    public function getTargetCategories(): array
+    {
+        $db   = $this->getDatabase();
+        $rows = $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(['c.id', 'c.title', 'c.level']))
+                ->select($db->quoteName('d.title', 'directory_title'))
+                ->from($db->quoteName('#__movielist_categories', 'c'))
+                ->join('LEFT', $db->quoteName('#__movielist_directories', 'd') . ' ON ' . $db->quoteName('d.id') . ' = ' . $db->quoteName('c.directory_id'))
+                ->where($db->quoteName('c.state') . ' >= 0')
+                ->order($db->quoteName('d.ordering') . ' ASC, ' . $db->quoteName('c.path') . ' ASC')
+        )->loadObjectList() ?: [];
+
+        $out = [];
+        foreach ($rows as $r) {
+            $indent = str_repeat('— ', max(0, (int) $r->level - 1));
+            $o        = new \stdClass();
+            $o->id    = (int) $r->id;
+            $o->label = $r->directory_title . ' › ' . $indent . $r->title;
+            $out[]    = $o;
         }
 
         return $out;

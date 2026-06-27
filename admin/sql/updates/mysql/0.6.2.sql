@@ -1,4 +1,4 @@
 --
--- 0.6.2: Mosets-style drill-down browse (festivals -> categories -> movies) in the admin Movies view.
+-- 0.6.2: Drill-down browse (directories -> categories -> movies) in the admin Movies view.
 -- No schema changes.
 --

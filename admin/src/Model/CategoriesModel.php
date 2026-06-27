@@ -52,6 +52,50 @@ class CategoriesModel extends ListModel
         parent::populateState($ordering, $direction);
     }
 
+    /**
+     * Directories for the move/copy target picker.
+     *
+     * @return  array  stdClass{id,title}
+     */
+    public function getDirectoriesList(): array
+    {
+        $db = $this->getDatabase();
+
+        return $db->setQuery(
+            $db->getQuery(true)->select($db->quoteName(['id', 'title']))
+                ->from($db->quoteName('#__movielist_directories'))
+                ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('title') . ' ASC')
+        )->loadObjectList() ?: [];
+    }
+
+    /**
+     * All categories as "Directory › Category" for the optional target-parent picker.
+     *
+     * @return  array  stdClass{id,label}
+     */
+    public function getParentCategories(): array
+    {
+        $db   = $this->getDatabase();
+        $rows = $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(['c.id', 'c.title', 'c.level']))
+                ->select($db->quoteName('d.title', 'directory_title'))
+                ->from($db->quoteName('#__movielist_categories', 'c'))
+                ->join('LEFT', $db->quoteName('#__movielist_directories', 'd') . ' ON ' . $db->quoteName('d.id') . ' = ' . $db->quoteName('c.directory_id'))
+                ->order($db->quoteName('d.ordering') . ' ASC, ' . $db->quoteName('c.path') . ' ASC')
+        )->loadObjectList() ?: [];
+
+        $out = [];
+        foreach ($rows as $r) {
+            $o        = new \stdClass();
+            $o->id    = (int) $r->id;
+            $o->label = $r->directory_title . ' › ' . str_repeat('— ', max(0, (int) $r->level - 1)) . $r->title;
+            $out[]    = $o;
+        }
+
+        return $out;
+    }
+
     protected function getListQuery()
     {
         $db    = $this->getDatabase();

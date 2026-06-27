@@ -2,7 +2,7 @@
 -- Schema for com_movielist (Joomla 5 / 6)
 --
 
--- Directories: top-level containers (multiple, unlike Mosets Tree single root)
+-- Directories: top-level containers for separate listings/festivals
 CREATE TABLE IF NOT EXISTS `#__movielist_directories` (
     `id`               INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `asset_id`         INT UNSIGNED NOT NULL DEFAULT 0,

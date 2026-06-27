@@ -370,6 +370,167 @@ class FieldsHelper
     }
 
     /**
+     * Subfield definition for the "cast / credits" group field (Name + Role).
+     */
+    public const CREDITS_SUBFIELDS = '[{"label":"Όνομα / Name","name":"name","type":"text"},{"label":"Ιδιότητα / Role","name":"role","type":"text"}]';
+
+    /**
+     * Parse a free-text credits/cast blob into group rows of {name, role}.
+     * Lines like "Role: Name" or "Name - Role" are split; comma/semicolon
+     * lists of names become one row per name; bare labels such as "KEY CAST"
+     * are dropped.
+     *
+     * @param   string  $text  The raw text.
+     *
+     * @return  array  Array of ['name' => string, 'role' => string].
+     */
+    public static function parseCreditsRows(string $text): array
+    {
+        $text = str_replace(["\r\n", "\r"], "\n", $text);
+        $text = preg_replace('/^\xEF\xBB\xBF/u', '', $text);
+        $rows = [];
+
+        foreach (preg_split('/\n|;|\/\//', (string) $text) as $line) {
+            $line = trim($line);
+            $line = preg_replace('/^\s*(key\s*cast|cast|actors?|credits|other\s*credits)\s*[:\-–—]?\s*/iu', '', $line);
+            $line = trim((string) $line);
+
+            if ($line === '' || preg_match('/^(key\s*cast|cast|actors?|credits|other\s*credits)\s*[:\-–—]?$/iu', $line)) {
+                continue;
+            }
+
+            if (preg_match('/^(.+?)\s+key\s*cast\b.*$/iu', $line, $m)) {
+                $name = trim($m[1], " \t\n\r\0\x0B-–—");
+
+                if ($name !== '') {
+                    $rows[] = ['name' => $name, 'role' => ''];
+                }
+
+                continue;
+            }
+
+            if (preg_match('/^(.+?)\s*\(([^)]*)\)$/u', $line, $m)) {
+                $name = trim($m[1]);
+                $role = self::cleanCreditRole(trim($m[2]));
+
+                if ($name !== '') {
+                    $rows[] = ['name' => $name, 'role' => $role];
+                }
+
+                continue;
+            }
+
+            if (preg_match('/^(.{1,45}?)\s*[:：]\s*(.+)$/u', $line, $m)) {
+                $role = self::cleanCreditRole(trim($m[1]));
+                $name = trim($m[2]);
+
+                if ($name !== '') {
+                    $rows[] = ['name' => $name, 'role' => $role];
+                }
+
+                continue;
+            }
+
+            if (preg_match('/^(.+?)\s+[–—-]\s+(.+)$/u', $line, $m)) {
+                $left  = trim($m[1]);
+                $right = trim($m[2]);
+
+                if ($left !== '' && $right !== '') {
+                    if (self::looksLikeCreditRole($left) && !self::looksLikeCreditRole($right)) {
+                        $rows[] = ['name' => $right, 'role' => self::cleanCreditRole($left)];
+                    } else {
+                        $rows[] = ['name' => $left, 'role' => self::cleanCreditRole($right)];
+                    }
+                }
+
+                continue;
+            }
+
+            if (preg_match('/^(.+?)\s*\/\s*(.+)$/u', $line, $m)) {
+                $name = trim($m[1]);
+                $role = self::cleanCreditRole(trim($m[2]));
+
+                if ($name !== '') {
+                    $rows[] = ['name' => $name, 'role' => $role];
+                }
+
+                continue;
+            }
+
+            if (preg_match('/^(.+?)(key\s*cast|director|writer|producer|cinematography|photography|editing|editor|music|sound|poster)$/iu', $line, $m)) {
+                $name = trim($m[1]);
+                $role = self::cleanCreditRole(trim($m[2]));
+
+                if ($name !== '') {
+                    $rows[] = ['name' => $name, 'role' => $role];
+                }
+
+                continue;
+            }
+
+            foreach (preg_split('/,(?=\s*\S)/u', $line) as $nm) {
+                $nm = trim($nm);
+                if ($nm !== '') {
+                    $rows[] = ['name' => $nm, 'role' => ''];
+                }
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Heuristic for deciding which side of a dash-separated credit is the role.
+     */
+    private static function looksLikeCreditRole(string $value): bool
+    {
+        $value = trim($value);
+
+        if ($value === '') {
+            return false;
+        }
+
+        if (str_word_count($value) > 5) {
+            return false;
+        }
+
+        return (bool) preg_match(
+            '/\b(actor|actress|cast|director|writer|producer|cinematographer|photographer|editor|composer|music|sound|voice|dance|dop|dp|screenplay|script|ηθοποι|σκηνοθ|σεναρ|παραγωγ|φωτογραφ|μονταζ|μουσικ)\b/iu',
+            $value
+        );
+    }
+
+    /**
+     * Remove source labels such as "Key Cast" from a parsed role.
+     */
+    private static function cleanCreditRole(string $role): string
+    {
+        $role = trim($role);
+
+        if ($role === '') {
+            return '';
+        }
+
+        if (preg_match('/^\s*key\s*cast\b/iu', $role)) {
+            return '';
+        }
+
+        if (preg_match('/\bkey\s*cast\b/iu', $role)) {
+            $role = preg_replace('/(?:\s*\/\s*)?key\s*cast\b.*$/iu', '', $role);
+
+            return trim((string) $role, " \t\n\r\0\x0B-–—:/");
+        }
+
+        if (preg_match('/^(key\s*cast|cast|actors?|credits|other\s*credits)\s*[:\-–—]?\s*$/iu', $role)) {
+            return '';
+        }
+
+        $role = preg_replace('/^\s*(key\s*cast|cast|actors?|credits|other\s*credits)\s*[:\-–—]?\s*/iu', '', $role);
+
+        return trim((string) $role);
+    }
+
+    /**
      * Strip the Joomla media field metadata fragment (#joomlaImage://...) from an
      * image path, leaving a plain, clean URL-safe path.
      *

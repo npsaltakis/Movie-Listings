@@ -1,0 +1,4 @@
+--
+-- 0.7.0: FilmFreeway CSV importer + Move/Copy for movies and categories.
+-- No schema changes (the migration-map table is created at runtime).
+--

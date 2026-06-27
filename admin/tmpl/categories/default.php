@@ -26,6 +26,12 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
     <div class="row">
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">
+                <div class="d-flex justify-content-end mb-2">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#ml-catmove-modal">
+                        <span class="icon-share-alt" aria-hidden="true"></span> <?php echo Text::_('COM_MOVIELIST_BATCH_MOVE_COPY'); ?>
+                    </button>
+                </div>
+
                 <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
 
                 <?php if (empty($this->items)) : ?>
@@ -81,7 +87,49 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                     <?php echo $this->pagination->getListFooter(); ?>
                 <?php endif; ?>
 
+                <div class="modal fade" id="ml-catmove-modal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title h5"><?php echo Text::_('COM_MOVIELIST_BATCH_MOVE_COPY_CATS'); ?></h3>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="text-muted small mb-2"><?php echo Text::_('COM_MOVIELIST_BATCH_SELECT_HINT'); ?></p>
+
+                                <label class="form-label fw-bold" for="batch_directory"><?php echo Text::_('COM_MOVIELIST_BATCH_TARGET_DIRECTORY'); ?></label>
+                                <select name="batch_directory" id="batch_directory" class="form-select mb-3">
+                                    <option value="0">— <?php echo Text::_('JSELECT'); ?> —</option>
+                                    <?php foreach (($this->moveDirectories ?? []) as $d) : ?>
+                                        <option value="<?php echo (int) $d->id; ?>"><?php echo $this->escape($d->title); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+
+                                <label class="form-label" for="batch_parent"><?php echo Text::_('COM_MOVIELIST_BATCH_TARGET_PARENT'); ?></label>
+                                <select name="batch_parent" id="batch_parent" class="form-select">
+                                    <option value="0">— <?php echo Text::_('COM_MOVIELIST_BATCH_NO_PARENT'); ?> —</option>
+                                    <?php foreach (($this->moveParents ?? []) as $p) : ?>
+                                        <option value="<?php echo (int) $p->id; ?>"><?php echo $this->escape($p->label); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <p class="text-muted small mt-2 mb-0"><?php echo Text::_('COM_MOVIELIST_BATCH_CAT_NOTE'); ?></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary"
+                                    onclick="document.getElementById('adminForm').batch_action.value='move';Joomla.submitform('categories.batchmove');">
+                                    <span class="icon-share-alt" aria-hidden="true"></span> <?php echo Text::_('COM_MOVIELIST_BATCH_MOVE'); ?>
+                                </button>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="document.getElementById('adminForm').batch_action.value='copy';Joomla.submitform('categories.batchmove');">
+                                    <span class="icon-copy" aria-hidden="true"></span> <?php echo Text::_('COM_MOVIELIST_BATCH_COPY_STRUCT'); ?>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <input type="hidden" name="task" value="">
+                <input type="hidden" name="batch_action" value="">
                 <input type="hidden" name="boxchecked" value="0">
                 <?php echo HTMLHelper::_('form.token'); ?>
             </div>

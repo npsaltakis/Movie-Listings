@@ -107,9 +107,14 @@ $linkCategories  = Route::_($base . '&filter_directory_id=' . $dirId . '&filter_
 
                 <?php // ------------------------------------------------------------ MOVIES ?>
                 <?php else : ?>
-                    <p><a href="<?php echo $linkCategories; ?>" class="btn btn-sm btn-outline-secondary mb-3">
-                        <span class="icon-arrow-left" aria-hidden="true"></span> <?php echo Text::_('COM_MOVIELIST_BROWSE_BACK_CATEGORIES'); ?>
-                    </a></p>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <a href="<?php echo $linkCategories; ?>" class="btn btn-sm btn-outline-secondary">
+                            <span class="icon-arrow-left" aria-hidden="true"></span> <?php echo Text::_('COM_MOVIELIST_BROWSE_BACK_CATEGORIES'); ?>
+                        </a>
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#ml-move-modal">
+                            <span class="icon-share-alt" aria-hidden="true"></span> <?php echo Text::_('COM_MOVIELIST_BATCH_MOVE_COPY'); ?>
+                        </button>
+                    </div>
 
                     <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
 
@@ -161,7 +166,41 @@ $linkCategories  = Route::_($base . '&filter_directory_id=' . $dirId . '&filter_
                     <?php endif; ?>
                 <?php endif; ?>
 
+                <?php if ($this->mode === 'movies') : ?>
+                    <div class="modal fade" id="ml-move-modal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title h5"><?php echo Text::_('COM_MOVIELIST_BATCH_MOVE_COPY_MOVIES'); ?></h3>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="text-muted small mb-2"><?php echo Text::_('COM_MOVIELIST_BATCH_SELECT_HINT'); ?></p>
+                                    <label class="form-label fw-bold" for="batch_catid"><?php echo Text::_('COM_MOVIELIST_BATCH_TARGET_CATEGORY'); ?></label>
+                                    <select name="batch_catid" id="batch_catid" class="form-select">
+                                        <option value="0">— <?php echo Text::_('JSELECT'); ?> —</option>
+                                        <?php foreach (($this->targetCategories ?? []) as $t) : ?>
+                                            <option value="<?php echo (int) $t->id; ?>"><?php echo $this->escape($t->label); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="document.getElementById('adminForm').batch_action.value='move';Joomla.submitform('movies.batchmove');">
+                                        <span class="icon-share-alt" aria-hidden="true"></span> <?php echo Text::_('COM_MOVIELIST_BATCH_MOVE'); ?>
+                                    </button>
+                                    <button type="button" class="btn btn-warning"
+                                        onclick="document.getElementById('adminForm').batch_action.value='copy';Joomla.submitform('movies.batchmove');">
+                                        <span class="icon-copy" aria-hidden="true"></span> <?php echo Text::_('COM_MOVIELIST_BATCH_COPY'); ?>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
                 <input type="hidden" name="task" value="">
+                <input type="hidden" name="batch_action" value="">
                 <input type="hidden" name="boxchecked" value="0">
                 <input type="hidden" name="filter_directory_id" value="<?php echo $dirId; ?>">
                 <input type="hidden" name="filter_catid" value="<?php echo $catId; ?>">
