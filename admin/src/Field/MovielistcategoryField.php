@@ -33,8 +33,20 @@ class MovielistcategoryField extends ListField
             ->where($db->quoteName('state') . ' = 1')
             ->order($db->quoteName('directory_id') . ' ASC, ' . $db->quoteName('path') . ' ASC');
 
-        // Optional directory scoping passed via the field XML attribute.
+        // Directory scoping: a fixed XML attribute, or the active directory filter
+        // (so the category dropdown only lists the selected directory's categories).
         $directoryId = (int) $this->getAttribute('directory_id', 0);
+
+        if ($directoryId === 0 && ($stateKey = $this->getAttribute('directorystate'))) {
+            $app    = Factory::getApplication();
+            $filter = (array) $app->getInput()->get('filter', [], 'array');
+
+            if (isset($filter['directory_id']) && is_numeric($filter['directory_id'])) {
+                $directoryId = (int) $filter['directory_id'];
+            } else {
+                $directoryId = (int) $app->getUserState($stateKey);
+            }
+        }
 
         if ($directoryId > 0) {
             $query->where($db->quoteName('directory_id') . ' = ' . $directoryId);

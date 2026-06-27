@@ -5,7 +5,6 @@
 
         <field name="title" type="text" label="COM_MOVIELIST_MOVIE_TITLE" required="true" size="50" />
         <field name="alias" type="text" label="JFIELD_ALIAS_LABEL" hint="JFIELD_ALIAS_PLACEHOLDER" size="50" />
-        <field name="original_title" type="text" label="COM_MOVIELIST_MOVIE_ORIGINAL_TITLE" size="50" />
 
         <field name="directory_id" type="directory" label="COM_MOVIELIST_FIELD_DIRECTORY" required="true">
             <option value="">COM_MOVIELIST_SELECT_DIRECTORY</option>
@@ -14,21 +13,6 @@
         <field name="catid" type="movielistcategory" label="COM_MOVIELIST_FIELD_CATEGORY" required="true">
             <option value="">COM_MOVIELIST_SELECT_CATEGORY</option>
         </field>
-
-        <field name="year" type="number" label="COM_MOVIELIST_MOVIE_YEAR" min="1888" max="2100" />
-        <field name="duration" type="number" label="COM_MOVIELIST_MOVIE_DURATION" min="0" />
-        <field name="country" type="text" label="COM_MOVIELIST_MOVIE_COUNTRY" />
-        <field name="original_lang" type="text" label="COM_MOVIELIST_MOVIE_ORIGINAL_LANG" />
-
-        <field name="synopsis" type="editor" label="COM_MOVIELIST_MOVIE_SYNOPSIS" filter="JComponentHelper::filterText" buttons="true" />
-
-        <field name="trailer_url" type="url" label="COM_MOVIELIST_MOVIE_TRAILER_URL" />
-    </fieldset>
-
-    <fieldset name="director" label="COM_MOVIELIST_TAB_DIRECTOR">
-        <field name="director" type="text" label="COM_MOVIELIST_MOVIE_DIRECTOR" size="50" />
-        <field name="director_photo" type="media" label="COM_MOVIELIST_MOVIE_DIRECTOR_PHOTO" />
-        <field name="director_bio" type="editor" label="COM_MOVIELIST_MOVIE_DIRECTOR_BIO" filter="JComponentHelper::filterText" buttons="true" />
     </fieldset>
 
     <fieldset name="media" label="COM_MOVIELIST_TAB_MEDIA">

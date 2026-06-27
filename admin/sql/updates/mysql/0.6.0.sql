@@ -1,0 +1,5 @@
+--
+-- 0.6.0: Mosets Tree migration tool.
+-- The #__movielist_migration_map helper table is created at runtime by the
+-- migration model (CREATE TABLE IF NOT EXISTS), so no schema change is needed here.
+--

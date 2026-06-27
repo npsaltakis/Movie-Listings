@@ -74,18 +74,10 @@ return new class () implements ServiceProviderInterface {
                     $db = Factory::getContainer()->get(DatabaseInterface::class);
 
                     // field_key, type, label, show_in_list, show_in_detail
+                    // Only "category" is seeded as a system field (it shows the movie's category
+                    // name and never duplicates a custom field). Everything else is a custom field.
                     $systemFields = [
-                        ['original_title', 'text',     'COM_MOVIELIST_MOVIE_ORIGINAL_TITLE', 0, 1],
-                        ['category',       'text',     'COM_MOVIELIST_FIELD_CATEGORY',       1, 1],
-                        ['year',           'number',   'COM_MOVIELIST_MOVIE_YEAR',           1, 1],
-                        ['duration',       'number',   'COM_MOVIELIST_MOVIE_DURATION',       0, 1],
-                        ['country',        'text',     'COM_MOVIELIST_MOVIE_COUNTRY',        0, 1],
-                        ['original_lang',  'text',     'COM_MOVIELIST_MOVIE_ORIGINAL_LANG',  0, 1],
-                        ['director',       'text',     'COM_MOVIELIST_MOVIE_DIRECTOR',       1, 1],
-                        ['director_photo', 'media',    'COM_MOVIELIST_MOVIE_DIRECTOR_PHOTO', 0, 1],
-                        ['director_bio',   'editor',   'COM_MOVIELIST_MOVIE_DIRECTOR_BIO',   0, 1],
-                        ['synopsis',       'editor',   'COM_MOVIELIST_MOVIE_SYNOPSIS',       0, 1],
-                        ['trailer_url',    'url',      'COM_MOVIELIST_MOVIE_TRAILER_URL',    0, 1],
+                        ['category', 'text', 'COM_MOVIELIST_FIELD_CATEGORY', 1, 1],
                     ];
 
                     // Existing system field keys.

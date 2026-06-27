@@ -29,29 +29,10 @@ $customFields = $this->form->getGroup('com_fields');
             <div class="col-lg-9">
                 <?php echo $this->form->renderField('title'); ?>
                 <?php echo $this->form->renderField('alias'); ?>
-                <?php echo $this->form->renderField('original_title'); ?>
-                <?php echo $this->form->renderField('synopsis'); ?>
-                <?php echo $this->form->renderField('trailer_url'); ?>
             </div>
             <div class="col-lg-3">
                 <?php echo $this->form->renderField('directory_id'); ?>
                 <?php echo $this->form->renderField('catid'); ?>
-                <?php echo $this->form->renderField('year'); ?>
-                <?php echo $this->form->renderField('duration'); ?>
-                <?php echo $this->form->renderField('country'); ?>
-                <?php echo $this->form->renderField('original_lang'); ?>
-            </div>
-        </div>
-        <?php echo HTMLHelper::_('uitab.endTab'); ?>
-
-        <?php echo HTMLHelper::_('uitab.addTab', 'movieTab', 'director', Text::_('COM_MOVIELIST_TAB_DIRECTOR')); ?>
-        <div class="row">
-            <div class="col-lg-9">
-                <?php echo $this->form->renderField('director'); ?>
-                <?php echo $this->form->renderField('director_bio'); ?>
-            </div>
-            <div class="col-lg-3">
-                <?php echo $this->form->renderField('director_photo'); ?>
             </div>
         </div>
         <?php echo HTMLHelper::_('uitab.endTab'); ?>

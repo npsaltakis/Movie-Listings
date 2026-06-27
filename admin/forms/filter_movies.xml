@@ -8,7 +8,8 @@
             <option value="">COM_MOVIELIST_FILTER_ALL_DIRECTORIES</option>
         </field>
 
-        <field name="catid" type="movielistcategory" label="COM_MOVIELIST_FIELD_CATEGORY" onchange="this.form.submit();">
+        <field name="catid" type="movielistcategory" label="COM_MOVIELIST_FIELD_CATEGORY"
+               directorystate="com_movielist.movies.filter.directory_id" onchange="this.form.submit();">
             <option value="">COM_MOVIELIST_FILTER_ALL_CATEGORIES</option>
         </field>
 
