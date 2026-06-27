@@ -74,6 +74,7 @@ class FfimportModel extends BaseDatabaseModel
         }
 
         $this->ensureMapTable();
+        $this->ensureImportFields();
 
         // Resolve / create the target directory.
         if ($directoryId <= 0) {
@@ -256,6 +257,7 @@ class FfimportModel extends BaseDatabaseModel
         if ($ids) {
             $in = implode(',', array_map('intval', $ids));
             $db->setQuery('DELETE FROM #__movielist_field_values WHERE movie_id IN (' . $in . ')')->execute();
+            $db->setQuery('DELETE FROM #__movielist_images WHERE movie_id IN (' . $in . ')')->execute();
             $db->setQuery('DELETE FROM #__movielist_movies WHERE id IN (' . $in . ')')->execute();
         }
 
@@ -372,6 +374,68 @@ class FfimportModel extends BaseDatabaseModel
         }
 
         return $map;
+    }
+
+    /**
+     * Create the standard custom fields used by FilmFreeway imports when the
+     * component is installed on a clean database.
+     */
+    private function ensureImportFields(): void
+    {
+        $db       = $this->getDatabase();
+        $existing = $this->fieldIdByName();
+        $ordering = (int) $db->setQuery(
+            $db->getQuery(true)
+                ->select('COALESCE(MAX(' . $db->quoteName('ordering') . '), 0)')
+                ->from($db->quoteName('#__movielist_fields'))
+        )->loadResult();
+
+        $defs = [
+            ['greek_title', 'Ελληνικός Τίτλος - Greek Title', 'text', 0, 1, 1],
+            ['director', 'Σκηνοθέτης - Director', 'text', 1, 1, 1],
+            ['producer', 'Παραγωγός - Producer', 'text', 1, 1, 0],
+            ['country', 'Χώρα / Χώρες Παραγωγής - Country', 'text', 1, 1, 1],
+            ['year', 'Έτος Παραγωγής - Year', 'text', 1, 1, 1],
+            ['duration', 'Διάρκεια σε λεπτά - Duration (min)', 'number', 1, 1, 1],
+            ['cast', 'Συντελεστές - Credits', 'textarea', 1, 1, 0],
+            ['synopsis_gr', 'Περίληψη (Ελληνικά) - Synopsis (GR)', 'editor', 0, 1, 0],
+            ['synopsis_en', 'Synopsis (EN) - Περίληψη (Αγγλικά)', 'editor', 1, 1, 1],
+            ['director_bio_en', 'Director Bio (EN) - Βιογραφικό (Αγγλικά)', 'editor', 1, 1, 1],
+            ['trailer', 'Trailer', 'url', 0, 1, 0],
+        ];
+
+        foreach ($defs as $def) {
+            [$name, $label, $type, $required, $detail, $list] = $def;
+
+            if (isset($existing[$name])) {
+                continue;
+            }
+
+            $ordering++;
+
+            $row                 = new \stdClass();
+            $row->directory_id   = 0;
+            $row->is_system      = 0;
+            $row->field_key      = '';
+            $row->title          = $label;
+            $row->name           = $name;
+            $row->type           = $type;
+            $row->label          = $label;
+            $row->required       = (int) $required;
+            $row->searchable     = \in_array($name, ['greek_title', 'director', 'country', 'cast'], true) ? 1 : 0;
+            $row->show_in_list   = (int) $list;
+            $row->show_in_detail = (int) $detail;
+            $row->ordering       = $ordering;
+            $row->state          = 1;
+
+            if ($name === 'cast') {
+                $row->is_multiple   = 1;
+                $row->multiple_mode = 'group';
+                $row->subfields     = FieldsHelper::CREDITS_SUBFIELDS;
+            }
+
+            $db->insertObject('#__movielist_fields', $row);
+        }
     }
 
     /**

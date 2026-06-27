@@ -33,6 +33,7 @@ class HtmlView extends BaseHtmlView
     public $directories;
     public $categories;
     public $crumb;
+    public $targetDirectories;
     public $targetCategories;
 
     public function display($tpl = null)
@@ -49,7 +50,8 @@ class HtmlView extends BaseHtmlView
             $this->pagination       = $this->get('Pagination');
             $this->filterForm       = $this->get('FilterForm');
             $this->activeFilters    = $this->get('ActiveFilters');
-            $this->targetCategories = $model->getTargetCategories();
+            $this->targetDirectories = $model->getTargetDirectories();
+            $this->targetCategories  = $model->getTargetCategories();
         } elseif ($this->mode === 'categories') {
             $this->categories = $model->getBrowseCategories();
         } else {

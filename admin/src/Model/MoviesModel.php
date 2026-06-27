@@ -166,30 +166,47 @@ class MoviesModel extends ListModel
     }
 
     /**
-     * All categories as "Directory › Category" options for the move/copy picker.
+     * All directories for the move/copy listing picker.
      *
-     * @return  array  Array of stdClass{id, label}.
+     * @return  array  Array of stdClass{id, title}.
+     */
+    public function getTargetDirectories(): array
+    {
+        $db = $this->getDatabase();
+
+        return $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(['id', 'title']))
+                ->from($db->quoteName('#__movielist_directories'))
+                ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('title') . ' ASC')
+        )->loadObjectList() ?: [];
+    }
+
+    /**
+     * All categories grouped by directory_id for the move/copy picker.
+     * Returns stdClass{id, directory_id, label} so the template can cascade.
+     *
+     * @return  array
      */
     public function getTargetCategories(): array
     {
         $db   = $this->getDatabase();
         $rows = $db->setQuery(
             $db->getQuery(true)
-                ->select($db->quoteName(['c.id', 'c.title', 'c.level']))
-                ->select($db->quoteName('d.title', 'directory_title'))
+                ->select($db->quoteName(['c.id', 'c.title', 'c.level', 'c.directory_id']))
                 ->from($db->quoteName('#__movielist_categories', 'c'))
-                ->join('LEFT', $db->quoteName('#__movielist_directories', 'd') . ' ON ' . $db->quoteName('d.id') . ' = ' . $db->quoteName('c.directory_id'))
                 ->where($db->quoteName('c.state') . ' >= 0')
-                ->order($db->quoteName('d.ordering') . ' ASC, ' . $db->quoteName('c.path') . ' ASC')
+                ->order($db->quoteName('c.directory_id') . ' ASC, ' . $db->quoteName('c.path') . ' ASC')
         )->loadObjectList() ?: [];
 
         $out = [];
         foreach ($rows as $r) {
-            $indent = str_repeat('— ', max(0, (int) $r->level - 1));
-            $o        = new \stdClass();
-            $o->id    = (int) $r->id;
-            $o->label = $r->directory_title . ' › ' . $indent . $r->title;
-            $out[]    = $o;
+            $indent   = str_repeat('— ', max(0, (int) $r->level - 1));
+            $o              = new \stdClass();
+            $o->id          = (int) $r->id;
+            $o->directory_id = (int) $r->directory_id;
+            $o->label       = $indent . $r->title;
+            $out[]          = $o;
         }
 
         return $out;

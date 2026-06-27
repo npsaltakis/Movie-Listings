@@ -167,6 +167,31 @@ $linkCategories  = Route::_($base . '&filter_directory_id=' . $dirId . '&filter_
                 <?php endif; ?>
 
                 <?php if ($this->mode === 'movies') : ?>
+                    <?php
+                    // Build a JS map: directory_id => [{id, label}, ...]
+                    $catsByDir = [];
+                    foreach (($this->targetCategories ?? []) as $t) {
+                        $catsByDir[$t->directory_id][] = ['id' => $t->id, 'label' => $t->label];
+                    }
+                    ?>
+                    <script>
+                    var mlCatsByDir = <?php echo json_encode($catsByDir, JSON_UNESCAPED_UNICODE); ?>;
+                    function mlOnDirectoryChange(sel) {
+                        var dirId   = sel.value;
+                        var catSel  = document.getElementById('batch_catid');
+                        var cats    = mlCatsByDir[dirId] || [];
+                        var select  = '— <?php echo $this->escape(Text::_('JSELECT')); ?> —';
+                        catSel.innerHTML = '<option value="0">' + select + '</option>';
+                        cats.forEach(function(c) {
+                            var opt = document.createElement('option');
+                            opt.value = c.id;
+                            opt.textContent = c.label;
+                            catSel.appendChild(opt);
+                        });
+                        catSel.disabled = (cats.length === 0);
+                    }
+                    </script>
+
                     <div class="modal fade" id="ml-move-modal" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -176,12 +201,18 @@ $linkCategories  = Route::_($base . '&filter_directory_id=' . $dirId . '&filter_
                                 </div>
                                 <div class="modal-body">
                                     <p class="text-muted small mb-2"><?php echo Text::_('COM_MOVIELIST_BATCH_SELECT_HINT'); ?></p>
-                                    <label class="form-label fw-bold" for="batch_catid"><?php echo Text::_('COM_MOVIELIST_BATCH_TARGET_CATEGORY'); ?></label>
-                                    <select name="batch_catid" id="batch_catid" class="form-select">
+
+                                    <label class="form-label fw-bold" for="batch_directory_movie"><?php echo Text::_('COM_MOVIELIST_BATCH_TARGET_DIRECTORY'); ?></label>
+                                    <select id="batch_directory_movie" class="form-select mb-3" onchange="mlOnDirectoryChange(this)">
                                         <option value="0">— <?php echo Text::_('JSELECT'); ?> —</option>
-                                        <?php foreach (($this->targetCategories ?? []) as $t) : ?>
-                                            <option value="<?php echo (int) $t->id; ?>"><?php echo $this->escape($t->label); ?></option>
+                                        <?php foreach (($this->targetDirectories ?? []) as $d) : ?>
+                                            <option value="<?php echo (int) $d->id; ?>"><?php echo $this->escape($d->title); ?></option>
                                         <?php endforeach; ?>
+                                    </select>
+
+                                    <label class="form-label fw-bold" for="batch_catid"><?php echo Text::_('COM_MOVIELIST_BATCH_TARGET_CATEGORY'); ?></label>
+                                    <select name="batch_catid" id="batch_catid" class="form-select" disabled>
+                                        <option value="0">— <?php echo Text::_('JSELECT'); ?> —</option>
                                     </select>
                                 </div>
                                 <div class="modal-footer">
