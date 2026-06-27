@@ -3,21 +3,6 @@
     <fields name="filter">
         <field name="search" type="text" label="COM_MOVIELIST_FILTER_SEARCH"
                hint="JSEARCH_FILTER" class="js-stools-search-string" />
-
-        <field name="directory_id" type="directory" label="COM_MOVIELIST_FIELD_DIRECTORY" onchange="this.form.submit();">
-            <option value="">COM_MOVIELIST_FILTER_ALL_DIRECTORIES</option>
-        </field>
-
-        <field name="catid" type="movielistcategory" label="COM_MOVIELIST_FIELD_CATEGORY"
-               directorystate="com_movielist.movies.filter.directory_id" onchange="this.form.submit();">
-            <option value="">COM_MOVIELIST_FILTER_ALL_CATEGORIES</option>
-        </field>
-
-        <field name="state" type="list" label="JOPTION_SELECT_PUBLISHED" onchange="this.form.submit();">
-            <option value="">JOPTION_SELECT_PUBLISHED</option>
-            <option value="1">JPUBLISHED</option>
-            <option value="0">JUNPUBLISHED</option>
-        </field>
     </fields>
 
     <fields name="list">

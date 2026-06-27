@@ -8,6 +8,7 @@
 
 \defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
@@ -16,6 +17,9 @@ use Nickpsal\Component\Movielist\Administrator\Helper\FieldsHelper;
 $item     = $this->item;
 $backLink = Route::_('index.php?option=com_movielist&view=movies&catid=' . (int) $item->catid);
 $fields   = FieldsHelper::getRenderFields($item, 'detail');
+
+HTMLHelper::_('stylesheet', 'com_movielist/lightbox.css', ['version' => 'auto', 'relative' => true]);
+HTMLHelper::_('script', 'com_movielist/lightbox.js', ['version' => 'auto', 'relative' => true]);
 ?>
 <div class="com-movielist movielist-movie">
     <p class="mb-3"><a href="<?php echo $backLink; ?>">&laquo; <?php echo $this->escape($item->category_title); ?></a></p>
@@ -23,7 +27,8 @@ $fields   = FieldsHelper::getRenderFields($item, 'detail');
     <div class="row">
         <?php if (!empty($item->poster)) : ?>
             <div class="col-md-4">
-                <img class="img-fluid rounded shadow-sm mb-3" src="<?php echo Uri::root() . $this->escape(FieldsHelper::cleanImage($item->poster)); ?>"
+                <img class="img-fluid rounded shadow-sm mb-3 js-mlb" data-mlb-group="movie"
+                     src="<?php echo Uri::root() . $this->escape(FieldsHelper::cleanImage($item->poster)); ?>"
                      alt="<?php echo $this->escape($item->title); ?>">
             </div>
         <?php endif; ?>
@@ -43,7 +48,7 @@ $fields   = FieldsHelper::getRenderFields($item, 'detail');
                                             <?php foreach ($row as $cell) : ?>
                                                 <?php if (\in_array($cell->type, ['media', 'image'], true)) : ?>
                                                     <?php if ($cell->value !== '') : ?>
-                                                        <img class="rounded" style="max-height:56px" src="<?php echo Uri::root() . $this->escape(FieldsHelper::cleanImage($cell->value)); ?>" alt="">
+                                                        <img class="rounded js-mlb" data-mlb-group="field-<?php echo $this->escape($field->key); ?>" style="max-height:56px" src="<?php echo Uri::root() . $this->escape(FieldsHelper::cleanImage($cell->value)); ?>" alt="">
                                                     <?php endif; ?>
                                                 <?php elseif ($cell->type === 'editor') : ?>
                                                     <span class="movielist-cell"><?php echo strip_tags((string) $cell->value); ?></span>
@@ -59,7 +64,7 @@ $fields   = FieldsHelper::getRenderFields($item, 'detail');
                             case 'image': ?>
                                 <div class="d-flex flex-wrap gap-2">
                                     <?php foreach ($field->values as $img) : ?>
-                                        <img class="img-fluid rounded" style="max-height:160px" src="<?php echo Uri::root() . $this->escape($img); ?>" alt="">
+                                        <img class="img-fluid rounded js-mlb" data-mlb-group="field-<?php echo $this->escape($field->key); ?>" data-mlb-caption="<?php echo $this->escape($field->label); ?>" style="max-height:160px" src="<?php echo Uri::root() . $this->escape($img); ?>" alt="<?php echo $this->escape($field->label); ?>">
                                     <?php endforeach; ?>
                                 </div>
                                 <?php break; ?>
@@ -87,10 +92,11 @@ $fields   = FieldsHelper::getRenderFields($item, 'detail');
                 <?php foreach ($item->gallery as $img) : ?>
                     <div class="col">
                         <figure class="figure m-0">
-                            <img class="figure-img img-fluid rounded shadow-sm"
+                            <img class="figure-img img-fluid rounded shadow-sm js-mlb" data-mlb-group="gallery"
+                                 data-mlb-caption="<?php echo $this->escape($img->caption); ?>"
                                  src="<?php echo Uri::root() . $this->escape(FieldsHelper::cleanImage($img->filename)); ?>"
                                  alt="<?php echo $this->escape($img->caption ?: $item->title); ?>"
-                                 loading="lazy" style="aspect-ratio:3/2;object-fit:cover;width:100%;">
+                                 loading="lazy" style="aspect-ratio:3/2;object-fit:cover;width:100%;cursor:zoom-in;">
                             <?php if (!empty($img->caption)) : ?>
                                 <figcaption class="figure-caption small"><?php echo $this->escape($img->caption); ?></figcaption>
                             <?php endif; ?>

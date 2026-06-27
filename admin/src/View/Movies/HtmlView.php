@@ -29,14 +29,30 @@ class HtmlView extends BaseHtmlView
     protected $state;
     public $filterForm;
     public $activeFilters;
+    public $mode;
+    public $directories;
+    public $categories;
+    public $crumb;
 
     public function display($tpl = null)
     {
-        $this->items         = $this->get('Items');
-        $this->pagination    = $this->get('Pagination');
-        $this->state         = $this->get('State');
-        $this->filterForm    = $this->get('FilterForm');
-        $this->activeFilters = $this->get('ActiveFilters');
+        /** @var \Nickpsal\Component\Movielist\Administrator\Model\MoviesModel $model */
+        $model       = $this->getModel();
+        $this->state = $this->get('State');
+        $this->mode  = $model->getBrowseMode();
+        $this->crumb = $model->getBrowseCrumb();
+
+        if ($this->mode === 'movies') {
+            // Inside a category: the actual movies list (with search only).
+            $this->items         = $this->get('Items');
+            $this->pagination    = $this->get('Pagination');
+            $this->filterForm    = $this->get('FilterForm');
+            $this->activeFilters = $this->get('ActiveFilters');
+        } elseif ($this->mode === 'categories') {
+            $this->categories = $model->getBrowseCategories();
+        } else {
+            $this->directories = $model->getBrowseDirectories();
+        }
 
         if (\count($errors = $this->get('Errors'))) {
             throw new GenericDataException(implode("\n", $errors), 500);

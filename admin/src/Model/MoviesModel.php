@@ -8,6 +8,7 @@
 
 namespace Nickpsal\Component\Movielist\Administrator\Model;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Database\ParameterType;
 
@@ -41,7 +42,17 @@ class MoviesModel extends ListModel
 
     protected function populateState($ordering = 'a.title', $direction = 'asc')
     {
-        $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+        // Search may arrive flat (filter_search) or grouped (filter[search]); handle both.
+        $app       = Factory::getApplication();
+        $filterArr = (array) $app->getInput()->get('filter', [], 'array');
+
+        if (\array_key_exists('search', $filterArr)) {
+            $search = (string) $filterArr['search'];
+            $app->setUserState($this->context . '.filter.search', $search);
+        } else {
+            $search = (string) $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search', '');
+        }
+
         $this->setState('filter.search', $search);
 
         $directory = $this->getUserStateFromRequest($this->context . '.filter.directory_id', 'filter_directory_id', '');
@@ -54,6 +65,104 @@ class MoviesModel extends ListModel
         $this->setState('filter.state', $published);
 
         parent::populateState($ordering, $direction);
+    }
+
+    /**
+     * Which step of the Mosets-style drill-down we are on.
+     *
+     * @return  string  'directories' | 'categories' | 'movies'
+     */
+    public function getBrowseMode(): string
+    {
+        if ((int) $this->getState('filter.catid') > 0) {
+            return 'movies';
+        }
+
+        if ((int) $this->getState('filter.directory_id') > 0) {
+            return 'categories';
+        }
+
+        return 'directories';
+    }
+
+    /**
+     * Directories (festivals) with their movie counts, for the first browse step.
+     *
+     * @return  array
+     */
+    public function getBrowseDirectories(): array
+    {
+        $db  = $this->getDatabase();
+        $sub = $db->getQuery(true)
+            ->select('COUNT(' . $db->quoteName('x.id') . ')')
+            ->from($db->quoteName('#__movielist_movies', 'x'))
+            ->where($db->quoteName('x.directory_id') . ' = ' . $db->quoteName('a.id'));
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(['a.id', 'a.title', 'a.state']))
+            ->select('(' . $sub . ') AS movie_count')
+            ->from($db->quoteName('#__movielist_directories', 'a'))
+            ->order($db->quoteName('a.ordering') . ' ASC, ' . $db->quoteName('a.title') . ' ASC');
+
+        return $db->setQuery($query)->loadObjectList() ?: [];
+    }
+
+    /**
+     * Categories of the selected directory with their movie counts, for the second step.
+     *
+     * @return  array
+     */
+    public function getBrowseCategories(): array
+    {
+        $dir = (int) $this->getState('filter.directory_id');
+
+        if ($dir <= 0) {
+            return [];
+        }
+
+        $db  = $this->getDatabase();
+        $sub = $db->getQuery(true)
+            ->select('COUNT(' . $db->quoteName('x.id') . ')')
+            ->from($db->quoteName('#__movielist_movies', 'x'))
+            ->where($db->quoteName('x.catid') . ' = ' . $db->quoteName('a.id'));
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(['a.id', 'a.title', 'a.level', 'a.state']))
+            ->select('(' . $sub . ') AS movie_count')
+            ->from($db->quoteName('#__movielist_categories', 'a'))
+            ->where($db->quoteName('a.directory_id') . ' = ' . $dir)
+            ->order($db->quoteName('a.path') . ' ASC');
+
+        return $db->setQuery($query)->loadObjectList() ?: [];
+    }
+
+    /**
+     * Resolve the directory / category titles for the breadcrumb.
+     *
+     * @return  array{directory: ?string, category: ?string}
+     */
+    public function getBrowseCrumb(): array
+    {
+        $db  = $this->getDatabase();
+        $out = ['directory' => null, 'category' => null];
+
+        if ($dir = (int) $this->getState('filter.directory_id')) {
+            $out['directory'] = $db->setQuery(
+                $db->getQuery(true)->select($db->quoteName('title'))
+                    ->from($db->quoteName('#__movielist_directories'))
+                    ->where($db->quoteName('id') . ' = ' . $dir)
+            )->loadResult();
+        }
+
+        if ($cat = (int) $this->getState('filter.catid')) {
+            $out['category'] = $db->setQuery(
+                $db->getQuery(true)->select($db->quoteName('title'))
+                    ->from($db->quoteName('#__movielist_categories'))
+                    ->where($db->quoteName('id') . ' = ' . $cat)
+            )->loadResult();
+        }
+
+        return $out;
     }
 
     protected function getListQuery()

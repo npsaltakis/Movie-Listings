@@ -1,0 +1,4 @@
+--
+-- 0.6.1: front-end lightbox for poster / director photo / gallery images.
+-- No schema changes.
+--

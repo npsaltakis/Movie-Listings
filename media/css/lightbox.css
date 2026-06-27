@@ -1,0 +1,78 @@
+/**
+ * Lightbox styles for com_movielist.
+ * @copyright (C) 2026 Nick Psaltakis. All rights reserved.
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ */
+.mlb-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: rgba(0, 0, 0, .88);
+}
+
+.mlb-overlay.is-open {
+    display: flex;
+}
+
+.mlb-figure {
+    margin: 0;
+    max-width: 92vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mlb-img {
+    max-width: 92vw;
+    max-height: 84vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 6px 40px rgba(0, 0, 0, .5);
+}
+
+.mlb-caption {
+    margin-top: .75rem;
+    color: #eee;
+    text-align: center;
+    font-size: .95rem;
+}
+
+.mlb-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    background: none;
+    border: 0;
+    color: #fff;
+    font-size: 2.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.mlb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3rem;
+    height: 3rem;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .12);
+    color: #fff;
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.mlb-prev { left: 1rem; }
+.mlb-next { right: 1rem; }
+
+.mlb-nav:hover,
+.mlb-close:hover {
+    background: rgba(255, 255, 255, .25);
+}
