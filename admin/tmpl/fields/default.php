@@ -21,7 +21,7 @@ $wa->useScript('multiselect')->useScript('table.columns');
 $user      = Factory::getApplication()->getIdentity();
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn  = $this->escape($this->state->get('list.direction'));
-$saveOrder = $this->saveOrder && $listDirn === 'asc';
+$saveOrder = $this->saveOrder && strtolower($listDirn) === 'asc';
 
 if ($saveOrder && !empty($this->items)) {
     $saveOrderingUrl = 'index.php?option=com_movielist&task=fields.saveOrderAjax&tmpl=component&' . Factory::getSession()->getFormToken() . '=1';
@@ -32,9 +32,9 @@ if ($saveOrder && !empty($this->items)) {
     <div class="row">
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">
-                <?php $applyTab = (string) $this->state->get('filter.apply_to', ''); ?>
+                <?php $applyTab = $this->state->get('filter.apply_to') === 'script' ? 'script' : 'film'; ?>
                 <ul class="nav nav-tabs mb-3 movielist-fields-tabs">
-                    <?php foreach (['film' => 'COM_MOVIELIST_FIELDS_TAB_FILM', 'script' => 'COM_MOVIELIST_FIELDS_TAB_SCRIPT', '' => 'COM_MOVIELIST_FIELDS_TAB_ALL'] as $tabValue => $tabLabel) : ?>
+                    <?php foreach (['film' => 'COM_MOVIELIST_FIELDS_TAB_FILM', 'script' => 'COM_MOVIELIST_FIELDS_TAB_SCRIPT'] as $tabValue => $tabLabel) : ?>
                         <li class="nav-item">
                             <a class="nav-link<?php echo $applyTab === $tabValue ? ' active' : ''; ?>" href="#"
                                onclick="const s = document.querySelector('select[name=&quot;filter[apply_to]&quot;]'); s.value = '<?php echo $tabValue; ?>'; s.form.submit(); return false;">

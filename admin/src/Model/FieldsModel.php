@@ -63,12 +63,9 @@ class FieldsModel extends ListModel
         $query->select($db->quoteName(['a.id', 'a.title', 'a.label', 'a.name', 'a.type', 'a.apply_to', 'a.is_system', 'a.field_key', 'a.required', 'a.is_multiple', 'a.max_items', 'a.show_in_list', 'a.show_in_detail', 'a.state', 'a.ordering']))
             ->from($db->quoteName('#__movielist_fields', 'a'));
 
-        // Film/script tab: type-specific tabs also include the shared ("all") fields.
-        $applyTo = (string) $this->getState('filter.apply_to');
-
-        if ($applyTo === 'film' || $applyTo === 'script') {
-            $query->whereIn($db->quoteName('a.apply_to'), ['all', $applyTo], ParameterType::STRING);
-        }
+        // Film/script tab (film is the default): each tab also includes the shared ("all") fields.
+        $applyTo = $this->getState('filter.apply_to') === 'script' ? 'script' : 'film';
+        $query->whereIn($db->quoteName('a.apply_to'), ['all', $applyTo], ParameterType::STRING);
 
         $state = $this->getState('filter.state');
         if (is_numeric($state)) {

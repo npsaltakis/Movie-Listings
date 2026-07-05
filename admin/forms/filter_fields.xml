@@ -10,9 +10,7 @@
             <option value="0">JUNPUBLISHED</option>
         </field>
 
-        <field name="apply_to" type="list" label="COM_MOVIELIST_FIELD_APPLY_TO" onchange="this.form.submit();">
-            <option value="">COM_MOVIELIST_FILTER_APPLY_TO</option>
-            <option value="all">COM_MOVIELIST_APPLY_TO_ALL</option>
+        <field name="apply_to" type="list" label="COM_MOVIELIST_FIELD_APPLY_TO" default="film" onchange="this.form.submit();">
             <option value="film">COM_MOVIELIST_CONTENT_TYPE_FILM</option>
             <option value="script">COM_MOVIELIST_CONTENT_TYPE_SCRIPT</option>
         </field>
