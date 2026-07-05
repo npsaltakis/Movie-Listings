@@ -11,7 +11,7 @@
         <description>Movie Listings component for film festivals.</description>
         <element>com_movielist</element>
         <type>component</type>
-        <client>0</client>
+        <client>1</client>
         <version>0.7.1</version>
         <infourl title="Movie Listings">https://github.com/npsaltakis/Movie-Listings</infourl>
         <downloads>
@@ -30,7 +30,7 @@
         <description>Movie Listings component for film festivals.</description>
         <element>com_movielist</element>
         <type>component</type>
-        <client>0</client>
+        <client>1</client>
         <version>0.6.2</version>
         <infourl title="Movie Listings">https://github.com/npsaltakis/Movie-Listings</infourl>
         <downloads>
