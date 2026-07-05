@@ -1,0 +1,69 @@
+/* com_movielist frontend styles */
+
+.movielist-movie .movielist-back a {
+    text-decoration: none;
+}
+
+.movielist-movie .movielist-movie-title {
+    margin-bottom: 1rem;
+}
+
+.movielist-fields .movielist-field-label {
+    font-weight: 600;
+}
+
+.movielist-fields dd {
+    margin-bottom: .5rem;
+}
+
+.movielist-field-image {
+    max-height: 120px;
+}
+
+.movielist-section {
+    margin-top: 2rem;
+}
+
+.movielist-section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: .75rem;
+    padding-bottom: .35rem;
+    border-bottom: 2px solid rgba(0, 0, 0, .1);
+}
+
+/* Responsive 16:9 wrapper for trailers (iframe or direct video). */
+.movielist-ratio {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: .5rem;
+    overflow: hidden;
+}
+
+.movielist-ratio iframe,
+.movielist-ratio video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.movielist-credits-table {
+    max-width: 720px;
+}
+
+.movielist-credits-table th {
+    white-space: nowrap;
+}
+
+.movielist-cell-image {
+    max-height: 56px;
+}
+
+.movielist-prose {
+    max-width: 75ch;
+}

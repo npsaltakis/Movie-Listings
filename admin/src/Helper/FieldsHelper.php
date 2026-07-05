@@ -531,6 +531,41 @@ class FieldsHelper
     }
 
     /**
+     * Resolve a video URL to something embeddable.
+     *
+     * @param   string  $url  The stored URL.
+     *
+     * @return  array{type:string, src:string}  type is 'iframe' (Vimeo/YouTube
+     *                                          player URL), 'video' (direct file
+     *                                          for a <video> tag) or 'link'.
+     */
+    public static function videoEmbed(string $url): array
+    {
+        $url = trim($url);
+
+        // Vimeo (plain, manage/…, or with a privacy hash after the id).
+        if (preg_match('~vimeo\.com/(?:manage/videos/|video/)?(\d+)(?:/([0-9a-f]+))?~i', $url, $m)) {
+            $src = 'https://player.vimeo.com/video/' . $m[1] . (!empty($m[2]) ? '?h=' . $m[2] : '');
+
+            return ['type' => 'iframe', 'src' => $src];
+        }
+
+        // YouTube (watch, share and shorts URLs).
+        if (preg_match('~(?:youtube\.com/(?:watch\?[^#]*v=|shorts/|embed/)|youtu\.be/)([\w-]{6,})~i', $url, $m)) {
+            return ['type' => 'iframe', 'src' => 'https://www.youtube.com/embed/' . $m[1]];
+        }
+
+        // Direct video file (query string allowed, e.g. signed URLs).
+        $path = (string) parse_url($url, PHP_URL_PATH);
+
+        if (preg_match('/\.(mp4|webm|ogv|m4v|mov)$/i', $path)) {
+            return ['type' => 'video', 'src' => $url];
+        }
+
+        return ['type' => 'link', 'src' => $url];
+    }
+
+    /**
      * Strip the Joomla media field metadata fragment (#joomlaImage://...) from an
      * image path, leaving a plain, clean URL-safe path.
      *

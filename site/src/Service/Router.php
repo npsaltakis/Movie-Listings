@@ -9,6 +9,7 @@
 namespace Nickpsal\Component\Movielist\Site\Service;
 
 use Joomla\CMS\Application\SiteApplication;
+use Joomla\CMS\Categories\CategoryFactoryInterface;
 use Joomla\CMS\Component\Router\RouterView;
 use Joomla\CMS\Component\Router\RouterViewConfiguration;
 use Joomla\CMS\Component\Router\Rules\MenuRules;
@@ -34,7 +35,7 @@ class Router extends RouterView
      */
     private $db;
 
-    public function __construct(SiteApplication $app, AbstractMenu $menu, DatabaseInterface $db)
+    public function __construct(SiteApplication $app, AbstractMenu $menu, ?CategoryFactoryInterface $categoryFactory, DatabaseInterface $db)
     {
         $this->db = $db;
 

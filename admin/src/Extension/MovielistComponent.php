@@ -8,6 +8,8 @@
 
 namespace Nickpsal\Component\Movielist\Administrator\Extension;
 
+use Joomla\CMS\Component\Router\RouterServiceInterface;
+use Joomla\CMS\Component\Router\RouterServiceTrait;
 use Joomla\CMS\Extension\BootableExtensionInterface;
 use Joomla\CMS\Extension\MVCComponent;
 use Psr\Container\ContainerInterface;
@@ -19,8 +21,10 @@ use Psr\Container\ContainerInterface;
 /**
  * Component class for com_movielist.
  */
-class MovielistComponent extends MVCComponent implements BootableExtensionInterface
+class MovielistComponent extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface
 {
+    use RouterServiceTrait;
+
     /**
      * Booting the extension.
      *
