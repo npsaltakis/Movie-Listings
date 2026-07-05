@@ -27,6 +27,7 @@ $wa->useScript('keepalive')->useScript('form.validate');
             <div class="col-lg-9">
                 <?php echo $this->form->renderField('title'); ?>
                 <?php echo $this->form->renderField('alias'); ?>
+                <?php echo $this->form->renderField('content_type'); ?>
                 <?php echo $this->form->renderField('description'); ?>
             </div>
             <div class="col-lg-3">

@@ -28,6 +28,7 @@ class FieldsModel extends ListModel
                 'title', 'a.title',
                 'name', 'a.name',
                 'type', 'a.type',
+                'apply_to', 'a.apply_to',
                 'directory_id', 'a.directory_id',
                 'state', 'a.state',
                 'ordering', 'a.ordering',
@@ -48,6 +49,9 @@ class FieldsModel extends ListModel
         $published = $this->getUserStateFromRequest($this->context . '.filter.state', 'filter_state', '');
         $this->setState('filter.state', $published);
 
+        $applyTo = $this->getUserStateFromRequest($this->context . '.filter.apply_to', 'filter_apply_to', '');
+        $this->setState('filter.apply_to', $applyTo);
+
         parent::populateState($ordering, $direction);
     }
 
@@ -56,8 +60,15 @@ class FieldsModel extends ListModel
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
 
-        $query->select($db->quoteName(['a.id', 'a.title', 'a.label', 'a.name', 'a.type', 'a.is_system', 'a.field_key', 'a.required', 'a.is_multiple', 'a.max_items', 'a.show_in_list', 'a.show_in_detail', 'a.state', 'a.ordering']))
+        $query->select($db->quoteName(['a.id', 'a.title', 'a.label', 'a.name', 'a.type', 'a.apply_to', 'a.is_system', 'a.field_key', 'a.required', 'a.is_multiple', 'a.max_items', 'a.show_in_list', 'a.show_in_detail', 'a.state', 'a.ordering']))
             ->from($db->quoteName('#__movielist_fields', 'a'));
+
+        // Film/script tab: type-specific tabs also include the shared ("all") fields.
+        $applyTo = (string) $this->getState('filter.apply_to');
+
+        if ($applyTo === 'film' || $applyTo === 'script') {
+            $query->whereIn($db->quoteName('a.apply_to'), ['all', $applyTo], ParameterType::STRING);
+        }
 
         $state = $this->getState('filter.state');
         if (is_numeric($state)) {

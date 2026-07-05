@@ -13,6 +13,11 @@
 
         <field name="alias" type="text" label="JFIELD_ALIAS_LABEL" hint="JFIELD_ALIAS_PLACEHOLDER" size="50" />
 
+        <field name="content_type" type="list" label="COM_MOVIELIST_FIELD_CONTENT_TYPE" description="COM_MOVIELIST_FIELD_CONTENT_TYPE_DESC" default="film">
+            <option value="film">COM_MOVIELIST_CONTENT_TYPE_FILM</option>
+            <option value="script">COM_MOVIELIST_CONTENT_TYPE_SCRIPT</option>
+        </field>
+
         <field name="description" type="editor" label="JGLOBAL_DESCRIPTION" filter="JComponentHelper::filterText" buttons="true" />
 
         <field name="image" type="media" label="COM_MOVIELIST_FIELD_IMAGE" />

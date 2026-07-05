@@ -52,8 +52,21 @@ class MovieModel extends AdminModel
      */
     protected function preprocessForm(Form $form, $data, $group = 'content')
     {
-        // Custom fields are global, so always inject them (under the com_fields group).
-        FieldsHelper::addFieldsToForm($form);
+        // Resolve the entry's category so film/script-only fields keep their
+        // "required" only when they apply. On save $data is empty, so fall
+        // back to the posted form data.
+        if (\is_object($data)) {
+            $catid = (int) ($data->catid ?? 0);
+        } else {
+            $catid = (int) (((array) $data)['catid'] ?? 0);
+        }
+
+        if ($catid <= 0) {
+            $jform = Factory::getApplication()->getInput()->post->get('jform', [], 'array');
+            $catid = (int) ($jform['catid'] ?? 0);
+        }
+
+        FieldsHelper::addFieldsToForm($form, 0, FieldsHelper::categoryContentType($catid));
 
         parent::preprocessForm($form, $data, $group);
     }

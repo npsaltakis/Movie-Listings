@@ -95,7 +95,16 @@ class FieldsHelper
         $values  = isset($movie->id) ? self::getValues((int) $movie->id) : [];
         $rendered = [];
 
+        // Film/script entries only show the fields that apply to their type.
+        $contentType = self::categoryContentType((int) ($movie->catid ?? 0));
+
         foreach ($fields as $field) {
+            $applyTo = $field->apply_to ?? 'all';
+
+            if ($contentType !== null && \in_array($applyTo, ['film', 'script'], true) && $applyTo !== $contentType) {
+                continue;
+            }
+
             if ((int) $field->is_system === 1) {
                 $key = $field->field_key;
                 $raw = ($key === 'category') ? ($movie->category_title ?? '') : ($movie->$key ?? '');
@@ -219,14 +228,54 @@ class FieldsHelper
     }
 
     /**
+     * Category id => content type ('film' | 'script') for every category.
+     *
+     * @return  array
+     */
+    public static function categoryTypeMap(): array
+    {
+        $db   = Factory::getContainer()->get(DatabaseInterface::class);
+        $rows = $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(['id', 'content_type']))
+                ->from($db->quoteName('#__movielist_categories'))
+        )->loadObjectList() ?: [];
+
+        $map = [];
+
+        foreach ($rows as $row) {
+            $map[(int) $row->id] = (string) $row->content_type;
+        }
+
+        return $map;
+    }
+
+    /**
+     * Content type of a category (null when the category is unknown).
+     */
+    public static function categoryContentType(int $catid): ?string
+    {
+        if ($catid <= 0) {
+            return null;
+        }
+
+        return self::categoryTypeMap()[$catid] ?? null;
+    }
+
+    /**
      * Inject the custom (non-system) fields into a movie form, under the "com_fields" group.
      *
-     * @param   Form     $form         The form to extend.
-     * @param   integer  $directoryId  Unused (fields are global).
+     * Each field is tagged with a "movielist-apply-{all|film|script}" CSS class so the
+     * admin form can toggle fields when the category (film/script) changes; "required"
+     * is only enforced when the field applies to the current content type.
+     *
+     * @param   Form         $form         The form to extend.
+     * @param   integer      $directoryId  Unused (fields are global).
+     * @param   string|null  $contentType  'film' | 'script' | null when unknown.
      *
      * @return  void
      */
-    public static function addFieldsToForm(Form $form, int $directoryId = 0): void
+    public static function addFieldsToForm(Form $form, int $directoryId = 0, ?string $contentType = null): void
     {
         $fields = self::getFields();
 
@@ -240,6 +289,8 @@ class FieldsHelper
         foreach ($fields as $field) {
             $label   = $field->label ?: $field->title;
             $options = json_decode($field->options ?? '', true);
+            $applyTo = \in_array($field->apply_to ?? 'all', ['film', 'script'], true) ? $field->apply_to : 'all';
+            $applies = $applyTo === 'all' || $contentType === null || $applyTo === $contentType;
 
             if ((int) ($field->is_multiple ?? 0) === 1) {
                 // Repeatable field -> a subform with a single inner field per row.
@@ -249,6 +300,7 @@ class FieldsHelper
                 $node->addAttribute('label', $label);
                 $node->addAttribute('multiple', 'true');
                 $node->addAttribute('layout', 'joomla.form.field.subform.repeatable-table');
+                $node->addAttribute('class', 'movielist-apply-' . $applyTo);
 
                 $max  = (int) ($field->max_items ?? 0);
                 $desc = trim((string) ($field->description ?? ''));
@@ -292,12 +344,13 @@ class FieldsHelper
             $node->addAttribute('name', $field->name);
             $node->addAttribute('type', self::mapType($field->type));
             $node->addAttribute('label', $label);
+            $node->addAttribute('class', 'movielist-apply-' . $applyTo);
 
             if (!empty($field->description)) {
                 $node->addAttribute('description', $field->description);
             }
 
-            if ((int) $field->required === 1) {
+            if ((int) $field->required === 1 && $applies) {
                 $node->addAttribute('required', 'true');
             }
 

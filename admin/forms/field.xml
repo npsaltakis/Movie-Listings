@@ -26,6 +26,12 @@
             <option value="media">COM_MOVIELIST_FIELD_TYPE_MEDIA</option>
         </field>
 
+        <field name="apply_to" type="list" label="COM_MOVIELIST_FIELD_APPLY_TO" description="COM_MOVIELIST_FIELD_APPLY_TO_DESC" default="all">
+            <option value="all">COM_MOVIELIST_APPLY_TO_ALL</option>
+            <option value="film">COM_MOVIELIST_CONTENT_TYPE_FILM</option>
+            <option value="script">COM_MOVIELIST_CONTENT_TYPE_SCRIPT</option>
+        </field>
+
         <field name="description" type="textarea" label="JGLOBAL_DESCRIPTION" rows="3" />
 
         <field name="default_value" type="text" label="COM_MOVIELIST_FIELD_DEFAULT" size="50" />

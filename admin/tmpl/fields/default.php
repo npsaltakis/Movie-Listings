@@ -32,6 +32,17 @@ if ($saveOrder && !empty($this->items)) {
     <div class="row">
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">
+                <?php $applyTab = (string) $this->state->get('filter.apply_to', ''); ?>
+                <ul class="nav nav-tabs mb-3 movielist-fields-tabs">
+                    <?php foreach (['film' => 'COM_MOVIELIST_FIELDS_TAB_FILM', 'script' => 'COM_MOVIELIST_FIELDS_TAB_SCRIPT', '' => 'COM_MOVIELIST_FIELDS_TAB_ALL'] as $tabValue => $tabLabel) : ?>
+                        <li class="nav-item">
+                            <a class="nav-link<?php echo $applyTab === $tabValue ? ' active' : ''; ?>" href="#"
+                               onclick="const s = document.querySelector('select[name=&quot;filter[apply_to]&quot;]'); s.value = '<?php echo $tabValue; ?>'; s.form.submit(); return false;">
+                                <?php echo Text::_($tabLabel); ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
                 <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
 
                 <?php if (empty($this->items)) : ?>
@@ -52,6 +63,7 @@ if ($saveOrder && !empty($this->items)) {
                                     <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                                 </th>
                                 <th scope="col" class="d-none d-md-table-cell"><?php echo Text::_('COM_MOVIELIST_FIELD_TYPE'); ?></th>
+                                <th scope="col" class="w-10"><?php echo Text::_('COM_MOVIELIST_FIELD_APPLY_TO'); ?></th>
                                 <th scope="col" class="w-5 text-center"><?php echo Text::_('COM_MOVIELIST_FIELD_IN_LIST'); ?></th>
                                 <th scope="col" class="w-5 text-center"><?php echo Text::_('COM_MOVIELIST_FIELD_IN_DETAIL'); ?></th>
                                 <th scope="col" class="w-3 text-center d-none d-md-table-cell">
@@ -92,6 +104,13 @@ if ($saveOrder && !empty($this->items)) {
                                         <div class="small text-muted"><code><?php echo $this->escape($item->is_system ? $item->field_key : $item->name); ?></code></div>
                                     </th>
                                     <td class="d-none d-md-table-cell"><?php echo $this->escape($item->type); ?></td>
+                                    <td>
+                                        <?php $applyTo = \in_array($item->apply_to ?? 'all', ['film', 'script'], true) ? $item->apply_to : 'all'; ?>
+                                        <?php $badge = ['all' => 'bg-secondary', 'film' => 'bg-primary', 'script' => 'bg-warning text-dark']; ?>
+                                        <span class="badge <?php echo $badge[$applyTo]; ?>">
+                                            <?php echo Text::_(['all' => 'COM_MOVIELIST_APPLY_TO_ALL', 'film' => 'COM_MOVIELIST_CONTENT_TYPE_FILM', 'script' => 'COM_MOVIELIST_CONTENT_TYPE_SCRIPT'][$applyTo]); ?>
+                                        </span>
+                                    </td>
                                     <td class="text-center">
                                         <?php echo HTMLHelper::_('jgrid.state', [
                                             ['unpublish', 'COM_MOVIELIST_TOGGLE_IN_LIST_OFF'],

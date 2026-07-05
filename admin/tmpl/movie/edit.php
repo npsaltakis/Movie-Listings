@@ -17,6 +17,10 @@ use Nickpsal\Component\Movielist\Administrator\Helper\FieldsHelper;
 $wa = $this->getDocument()->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
 
+// Film/script field toggling: category id => content type map for admin.js.
+$this->getDocument()->addScriptOptions('com_movielist.fieldToggle', ['categoryTypes' => FieldsHelper::categoryTypeMap()]);
+HTMLHelper::_('script', 'com_movielist/admin.js', ['version' => 'auto', 'relative' => true]);
+
 // getGroup() also returns the inner fields of inline subforms (e.g. the
 // name/role columns of a group field), so keep only the defined fields.
 $fieldNames   = array_column(FieldsHelper::getFields(), 'name');
