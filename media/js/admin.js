@@ -59,12 +59,39 @@ document.addEventListener('DOMContentLoaded', () => {
             entry.wrap.style.display = show ? '' : 'none';
 
             entry.wrap.querySelectorAll('input, select, textarea').forEach((input) => {
-                if (!show && input.required) {
-                    input.dataset.movielistRequired = '1';
-                    input.required = false;
-                } else if (show && input.dataset.movielistRequired) {
-                    input.required = true;
-                    delete input.dataset.movielistRequired;
+                if (!show) {
+                    // Joomla's client validation checks the attribute AND the
+                    // "required" class; disabling also skips validation and
+                    // keeps the value out of the POST.
+                    if (input.required) {
+                        input.dataset.movielistRequired = '1';
+                        input.required = false;
+                    }
+
+                    if (input.classList.contains('required')) {
+                        input.dataset.movielistReqClass = '1';
+                        input.classList.remove('required');
+                    }
+
+                    if (!input.disabled) {
+                        input.dataset.movielistDisabled = '1';
+                        input.disabled = true;
+                    }
+                } else {
+                    if (input.dataset.movielistRequired) {
+                        input.required = true;
+                        delete input.dataset.movielistRequired;
+                    }
+
+                    if (input.dataset.movielistReqClass) {
+                        input.classList.add('required');
+                        delete input.dataset.movielistReqClass;
+                    }
+
+                    if (input.dataset.movielistDisabled) {
+                        input.disabled = false;
+                        delete input.dataset.movielistDisabled;
+                    }
                 }
             });
         });
