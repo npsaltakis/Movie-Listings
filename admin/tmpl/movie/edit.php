@@ -11,12 +11,19 @@
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Nickpsal\Component\Movielist\Administrator\Helper\FieldsHelper;
 
 /** @var \Joomla\CMS\WebAsset\WebAssetManager $wa */
 $wa = $this->getDocument()->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
 
-$customFields = $this->form->getGroup('com_fields');
+// getGroup() also returns the inner fields of inline subforms (e.g. the
+// name/role columns of a group field), so keep only the defined fields.
+$fieldNames   = array_column(FieldsHelper::getFields(), 'name');
+$customFields = array_filter(
+    $this->form->getGroup('com_fields'),
+    static fn ($field) => \in_array($field->fieldname, $fieldNames, true)
+);
 ?>
 <form action="<?php echo Route::_('index.php?option=com_movielist&view=movie&layout=edit&id=' . (int) $this->item->id); ?>"
       method="post" name="adminForm" id="movie-form" class="form-validate">

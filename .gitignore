@@ -14,3 +14,6 @@ Thumbs.db
 *.bak
 .idea/
 .vscode/
+
+# FilmFreeway exports (submitter personal data - never commit)
+data/
