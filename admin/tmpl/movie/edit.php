@@ -17,8 +17,23 @@ use Nickpsal\Component\Movielist\Administrator\Helper\FieldsHelper;
 $wa = $this->getDocument()->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
 
-// Film/script field toggling: category id => content type map for admin.js.
-$this->getDocument()->addScriptOptions('com_movielist.fieldToggle', ['categoryTypes' => FieldsHelper::categoryTypeMap()]);
+// Film/script field toggling: category id => content type map plus the
+// type-specific field names (editors lose the CSS class to TinyMCE, so the
+// JS locates fields by name).
+$fieldApply = [];
+
+foreach (FieldsHelper::getFields() as $customField) {
+    $applyTo = $customField->apply_to ?? 'all';
+
+    if ($applyTo === 'film' || $applyTo === 'script') {
+        $fieldApply[$customField->name] = $applyTo;
+    }
+}
+
+$this->getDocument()->addScriptOptions('com_movielist.fieldToggle', [
+    'categoryTypes' => FieldsHelper::categoryTypeMap(),
+    'fieldApply'    => $fieldApply,
+]);
 HTMLHelper::_('script', 'com_movielist/admin.js', ['version' => 'auto', 'relative' => true]);
 
 // getGroup() also returns the inner fields of inline subforms (e.g. the

@@ -32,6 +32,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Fields whose rendered markup drops the CSS class (e.g. editors behind
+    // TinyMCE) are located by their input name instead.
+    const tracked = new Set(entries.map((entry) => entry.wrap));
+
+    Object.entries(options.fieldApply || {}).forEach(([name, applyTo]) => {
+        const input = document.querySelector('[name="jform[com_fields][' + name + ']"]');
+        const wrap = input ? input.closest('.control-group') : null;
+
+        if (wrap && !tracked.has(wrap)) {
+            tracked.add(wrap);
+            entries.push({wrap, applyTo});
+        }
+    });
+
     if (!entries.length) {
         return;
     }
