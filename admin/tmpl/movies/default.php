@@ -25,8 +25,9 @@ $base = 'index.php?option=com_movielist&view=movies';
 $dirId = (int) $this->state->get('filter.directory_id');
 $catId = (int) $this->state->get('filter.catid');
 
-$linkDirectories = Route::_($base . '&filter_directory_id=&filter_catid=&limitstart=0');
-$linkCategories  = Route::_($base . '&filter_directory_id=' . $dirId . '&filter_catid=&limitstart=0');
+// Breadcrumb / back links also clear any active search so they return to browse mode.
+$linkDirectories = Route::_($base . '&filter_directory_id=&filter_catid=&filter[search]=&limitstart=0');
+$linkCategories  = Route::_($base . '&filter_directory_id=' . $dirId . '&filter_catid=&filter[search]=&limitstart=0');
 ?>
 <form action="<?php echo Route::_($base); ?>" method="post" name="adminForm" id="adminForm">
     <div class="row">
@@ -55,6 +56,18 @@ $linkCategories  = Route::_($base . '&filter_directory_id=' . $dirId . '&filter_
                         <span class="fw-bold"><?php echo $this->escape($this->crumb['category']); ?></span>
                     <?php endif; ?>
                 </nav>
+
+                <?php // Search bar on the browse steps: searches movies globally or within the current directory. ?>
+                <?php if ($this->mode !== 'movies') : ?>
+                    <div class="input-group mb-3" style="max-width: 25rem;">
+                        <input type="text" name="filter[search]" class="form-control" value=""
+                               placeholder="<?php echo $this->escape(Text::_('COM_MOVIELIST_SEARCH_MOVIES')); ?>"
+                               aria-label="<?php echo $this->escape(Text::_('COM_MOVIELIST_SEARCH_MOVIES')); ?>">
+                        <button type="submit" class="btn btn-primary" aria-label="<?php echo $this->escape(Text::_('JSEARCH_FILTER_SUBMIT')); ?>">
+                            <span class="icon-search" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                <?php endif; ?>
 
                 <?php // ------------------------------------------------------------ DIRECTORIES ?>
                 <?php if ($this->mode === 'directories') : ?>
@@ -108,9 +121,15 @@ $linkCategories  = Route::_($base . '&filter_directory_id=' . $dirId . '&filter_
                 <?php // ------------------------------------------------------------ MOVIES ?>
                 <?php else : ?>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <a href="<?php echo $linkCategories; ?>" class="btn btn-sm btn-outline-secondary">
-                            <span class="icon-arrow-left" aria-hidden="true"></span> <?php echo Text::_('COM_MOVIELIST_BROWSE_BACK_CATEGORIES'); ?>
-                        </a>
+                        <?php if ($dirId > 0) : ?>
+                            <a href="<?php echo $linkCategories; ?>" class="btn btn-sm btn-outline-secondary">
+                                <span class="icon-arrow-left" aria-hidden="true"></span> <?php echo Text::_('COM_MOVIELIST_BROWSE_BACK_CATEGORIES'); ?>
+                            </a>
+                        <?php else : ?>
+                            <a href="<?php echo $linkDirectories; ?>" class="btn btn-sm btn-outline-secondary">
+                                <span class="icon-arrow-left" aria-hidden="true"></span> <?php echo Text::_('COM_MOVIELIST_BROWSE_BACK_DIRECTORIES'); ?>
+                            </a>
+                        <?php endif; ?>
                         <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#ml-move-modal">
                             <span class="icon-share-alt" aria-hidden="true"></span> <?php echo Text::_('COM_MOVIELIST_BATCH_MOVE_COPY'); ?>
                         </button>
@@ -155,6 +174,11 @@ $linkCategories  = Route::_($base . '&filter_directory_id=' . $dirId . '&filter_
                                                 <?php echo $this->escape($item->title); ?>
                                             </a>
                                             <div class="small text-muted"><?php echo Text::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->alias)); ?></div>
+                                            <?php if (!$catId) : ?>
+                                                <div class="small text-muted">
+                                                    <span class="icon-folder me-1" aria-hidden="true"></span><?php echo $this->escape($item->directory_title ?? ''); ?> / <?php echo $this->escape($item->category_title ?? ''); ?>
+                                                </div>
+                                            <?php endif; ?>
                                         </th>
                                         <td class="text-center d-none d-md-table-cell"><?php echo (int) $item->id; ?></td>
                                     </tr>
@@ -233,8 +257,9 @@ $linkCategories  = Route::_($base . '&filter_directory_id=' . $dirId . '&filter_
                 <input type="hidden" name="task" value="">
                 <input type="hidden" name="batch_action" value="">
                 <input type="hidden" name="boxchecked" value="0">
-                <input type="hidden" name="filter_directory_id" value="<?php echo $dirId; ?>">
-                <input type="hidden" name="filter_catid" value="<?php echo $catId; ?>">
+                <?php // Empty (not "0") when unset, so a global search is not filtered to directory/category id 0. ?>
+                <input type="hidden" name="filter_directory_id" value="<?php echo $dirId ?: ''; ?>">
+                <input type="hidden" name="filter_catid" value="<?php echo $catId ?: ''; ?>">
                 <?php echo HTMLHelper::_('form.token'); ?>
             </div>
         </div>

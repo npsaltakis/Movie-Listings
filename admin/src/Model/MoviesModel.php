@@ -78,6 +78,11 @@ class MoviesModel extends ListModel
             return 'movies';
         }
 
+        // An active search always shows movie results (scoped to the directory if one is selected).
+        if ((string) $this->getState('filter.search') !== '') {
+            return 'movies';
+        }
+
         if ((int) $this->getState('filter.directory_id') > 0) {
             return 'categories';
         }

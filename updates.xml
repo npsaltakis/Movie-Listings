@@ -12,6 +12,25 @@
         <element>com_movielist</element>
         <type>component</type>
         <client>1</client>
+        <version>0.8.4</version>
+        <infourl title="Movie Listings">https://github.com/npsaltakis/Movie-Listings</infourl>
+        <downloads>
+            <downloadurl type="full" format="zip">https://github.com/npsaltakis/Movie-Listings/releases/download/v0.8.4/com_movielist.zip</downloadurl>
+        </downloads>
+        <tags>
+            <tag>stable</tag>
+        </tags>
+        <maintainer>Nick Psaltakis</maintainer>
+        <maintainerurl>https://github.com/npsaltakis</maintainerurl>
+        <targetplatform name="joomla" version="[56].[0-9]+"/>
+        <php_minimum>8.2</php_minimum>
+    </update>
+    <update>
+        <name>Movie Listings</name>
+        <description>Movie Listings component for film festivals.</description>
+        <element>com_movielist</element>
+        <type>component</type>
+        <client>1</client>
         <version>0.8.3</version>
         <infourl title="Movie Listings">https://github.com/npsaltakis/Movie-Listings</infourl>
         <downloads>
