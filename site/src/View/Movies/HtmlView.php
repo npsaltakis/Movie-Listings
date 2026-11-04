@@ -37,6 +37,18 @@ class HtmlView extends BaseHtmlView
         $this->years            = $this->getModel()->getYears();
         $this->filterCategories = $this->getModel()->getFilterCategories();
 
+        // Joomla's pagination only keeps option/view/Itemid; without the category
+        // the router resolves page links to the parent (categories) menu URL.
+        $input = Factory::getApplication()->getInput();
+
+        foreach (['catid', 'directory_id'] as $key) {
+            $value = $input->getInt($key, 0);
+
+            if ($value > 0) {
+                $this->pagination->setAdditionalUrlParam($key, $value);
+            }
+        }
+
         if (\count($errors = $this->get('Errors'))) {
             throw new GenericDataException(implode("\n", $errors), 500);
         }

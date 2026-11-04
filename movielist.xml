@@ -3,10 +3,11 @@
     <name>com_movielist</name>
     <author>Nick Psaltakis</author>
     <authorEmail>nickpsal@gmail.com</authorEmail>
+    <authorUrl>https://github.com/npsaltakis</authorUrl>
     <creationDate>2026-06</creationDate>
     <copyright>(C) 2026 Nick Psaltakis. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <version>0.8.4</version>
+    <version>0.8.5</version>
     <description>COM_MOVIELIST_XML_DESCRIPTION</description>
     <namespace path="src">Nickpsal\Component\Movielist</namespace>
 
